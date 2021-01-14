@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="toolbar">#9B4FB7</color>
+    <color name="pager">#DC94F7</color>
+    <color name="tool">#5E1F75</color>
+
+
+</resources>
