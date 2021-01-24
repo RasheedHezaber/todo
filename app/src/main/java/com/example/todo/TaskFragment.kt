@@ -1,7 +1,6 @@
 package com.example.todo
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.cardview.widget.CardView
@@ -11,16 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.recyclerview.widget.RecyclerView.Adapter as Adapter1
 
 
 var TAP_INDEX = "tab index"
 
-@Suppress("UNREACHABLE_CODE")
+@Suppress("UNREACHABLE_CODE", "DEPRECATION")
 class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
     val sdf = SimpleDateFormat("EEE, MMM d, ''yy")
     val currentDate = sdf.format(Date())
     val currentDate2 = sdf.format(Date())
     private lateinit var taskRecyclerView: RecyclerView
+
     private val taskViewModel by lazy{
         ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(TaskViewModle::class.java)
     }
@@ -37,10 +38,8 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_blank, container, false)
-
         taskRecyclerView = view.findViewById(R.id.task_recycler) as RecyclerView
         taskRecyclerView.layoutManager = LinearLayoutManager(context)
-
         return view
     }
 
@@ -74,11 +73,8 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
         val back: Button = itemView.findViewById(R.id.back)
         val card: CardView = itemView.findViewById(R.id.card)
         val delete: ImageButton = itemView.findViewById(R.id.delete)
-        val update: ImageButton = itemView.findViewById(R.id.update)
+        var update:ImageButton=itemView.findViewById(R.id.update)
 //
-
-
-
         private lateinit var tasks: OrganizeTasks
         fun bind(item: OrganizeTasks) {
             this.tasks = item
@@ -99,21 +95,17 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
             val dayDifference = differenceDates.toString().toInt()
 
 
-            if (currentDate.equals(databaseDate)){
+            if (currentDate.equals(databaseDate))
+            else (dayDifference <=3)
 
-            }else if(dayDifference <=3){
-
-            }
             val difference2: Long = Math.abs(sdf.parse(date3).time - sdf.parse(date4).time)
             val differenceDates2 = difference2 / (24 * 60 * 60 * 1000)
             val dayDifference2 = differenceDates2.toString().toInt()
 
-            if (currentDate.equals(databaseDate)){
+            if (currentDate.equals(databaseDate))
+            else (dayDifference2 <=3)
 
 
-            }else if(dayDifference2 <=3){
-
-            }
         }
 
         init {
@@ -131,18 +123,12 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
 
             }
             next.setOnClickListener {
-
-
                 if (type=="todo"){
                     taskViewModel.updateTaskState(tasks,3)
                 }
                 else{
                     taskViewModel.updateTaskState(tasks, 1)
-
-
                 }
-
-
             }
             back.setOnClickListener {
 
@@ -157,12 +143,16 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
 
             }
             delete.setOnClickListener { taskViewModel.deleteTasks(tasks) }
-
+            update.setOnClickListener {
+                DialogFragmentin.newInstance(tasks).apply{
+                    setTargetFragment(this@TaskFragment,1)
+                    show(this@TaskFragment.requireFragmentManager(),"update")
+                }
+            }
         }
 
     }
-    private inner class TaskAdapter(var tasks: List<OrganizeTasks>) :
-        RecyclerView.Adapter<TaskHolder>() {
+    private inner class TaskAdapter(var tasks: List<OrganizeTasks>) : Adapter1<TaskHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
             val view = layoutInflater.inflate(R.layout.todo_item, parent, false)
             return TaskHolder(view)
@@ -181,12 +171,8 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
 
     }
     private fun updateUI(tasks: List<OrganizeTasks>) {
-
-
         adapter = TaskAdapter(tasks)
         taskRecyclerView.adapter = adapter
-
-
     }
     companion object {
 
@@ -223,15 +209,17 @@ class TaskFragment : Fragment(),DialogFragmentin.InputCallbacks{
     }
 
     override fun onTaskAdd(task: OrganizeTasks) {
-     //   TODO("Not yet implemented")
 
             taskViewModel.addTask(task)
-
     }
 
     override fun onTaskDelete(task: OrganizeTasks) {
 
         taskViewModel.deleteTasks(task)
+    }
+
+    override fun onTaskUpdate(task: OrganizeTasks) {
+        taskViewModel.updateTasks(task)
     }
 
 }

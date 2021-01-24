@@ -22,5 +22,8 @@ class TaskViewModle : ViewModel() {
     fun deleteTasks(task: OrganizeTasks){
         taskRepo.deleteTask(task)
     }
+    fun updateTasks(task: OrganizeTasks){
+        taskRepo.updateTask(task)
+    }
 
 }
